@@ -1,0 +1,10 @@
+
+Maintainers: Don't forget to unconfigure vn0 before running the build, or
+it will fail (unless you propagate an override for the VNDEV variable).
+I've had a bash at automating this, but it doesn't currently work to
+my satisfaction (it would require running a script to check for free
+vn devices further up in the tree without reserving them, and this would
+create a race condition of sorts).  So parallising the build is difficult.
+
+Given that we're autonomous but not incremental build-wise this is not
+so much of a loss, but would be a bigger win later.

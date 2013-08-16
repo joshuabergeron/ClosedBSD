@@ -1,0 +1,21 @@
+TODO for ClosedBSD 1.1 Source Release
+-----------------------------------------------------------------------
+ - Get buildworld targets operational.		DONE
+ - Fix compiling outside of source tree.	DONE
+ - Fix crunchgen target.			DONE
+ - Fix kernel dependency to ensure a kernel gets built correctly.   DONE
+ - Fix CD image build                           DONE
+ - Fix environment variable propagation in 'make iso'	DONE
+ - CVS tag, import and repository build.	DONE
+
+ - CVS import milestone.			DONE
+ - Test the newly engineered build		IN PROGRESS
+
+ - Review closedbsd/* components for style(9) compliance      IN PROGRESS
+   - Rewrite config and ipfwconfig to share source
+   - Fix init and [ipfw]config style(9) compliance issues
+
+ - Fix CDROM image build			IN PROGRESS
+ - Fix floppy image build
+
+ - Implement convenience targets		DONE

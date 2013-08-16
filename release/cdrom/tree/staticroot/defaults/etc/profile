@@ -1,0 +1,2 @@
+BLOCKSIZE=K; export BLOCKSIZE
+PATH=/sbin:/usr/bin:/usr/sbin:/bin:/usr/local/bin:/usr/local/sbin export PATH

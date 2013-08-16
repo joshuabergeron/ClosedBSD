@@ -1,0 +1,29 @@
+This is the top level of the ClosedBSD source directory. 
+
+For copyright information, please see the file COPYRIGHT in this
+directory (additional copyright information also exists for some
+sources in this tree - please see the specific source directories for
+more information).
+
+The Makefile in this directory has a number of convenience targets for
+building and mastering ClosedBSD boot images from the source tree. Most
+of the time users can simply type 'make iso' and the build infrastructure
+will DTRT. For more detailed information, please read the Makefile.
+
+The build process has been completely reworked such that unattended builds
+from source are now possible. Objects are built outside of the source tree
+using the standard MAKEOBJDIRPREFIX semantics familiar to BSD systems.
+
+ClosedBSD Source Roadmap:
+-------------------------
+bin		System/User commands.
+closedbsd	ClosedBSD specific commands, including the config shell.
+release		Subdirectories for cdrom, floppy and flash releases.
+sbin		System binaries
+usr.bin		User commands.
+usr.sbin	System administration commands.
+
+For information on keeping your source up to date with ClosedBSD
+development branches via CVS, please see:
+  
+  http://cvs.closedbsd.org/

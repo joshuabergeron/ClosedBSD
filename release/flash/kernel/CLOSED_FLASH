@@ -1,0 +1,97 @@
+#
+# config(1) file for the ClosedBSD minikernel, FLASH version.
+#
+
+ident		CLOSEDBSD_FLASH
+makeoptions	KERNEL=kernel.CLOSEDBSD_FLASH
+maxusers	0
+
+options		NO_SWAPPING
+
+# allow ISA devices to be configured at boot time
+options		USERCONFIG
+options		VISUAL_USERCONFIG
+
+machine		i386
+cpu		I386_CPU
+cpu		I486_CPU
+cpu		I586_CPU
+cpu		I686_CPU
+
+options 	MATH_EMULATE		#Support for x87 emulation
+options 	INET			#InterNETworking
+options 	FFS			#Berkeley Fast Filesystem
+options 	FFS_ROOT		#FFS usable as root device [keep this!]
+options 	MD_ROOT			#MD is a potential root device
+options 	MFS			#Memory Filesystem
+options 	COMPAT_43		#Compatible with BSD 4.3 [KEEP THIS!]
+options 	UCONSOLE		#Allow users to grab the console
+options 	SYSVSHM			#SYSV-style shared memory
+options 	SYSVMSG			#SYSV-style message queues
+options 	SYSVSEM			#SYSV-style semaphores
+options 	IPFIREWALL
+options 	IPFIREWALL_FORWARD
+options 	IPDIVERT
+
+device	isa0
+device	pci0
+
+#device	fdc0		at isa? port IO_FD1 irq 6 drq 2
+#device	fd0		at fdc0 drive 0
+
+device	npx0		at nexus? port IO_NPX irq 13
+device	atkbdc0	at isa? port IO_KBD
+device	atkbd0	at atkbdc? irq 1
+#device	psm0		at atkbdc? irq 12
+#device	vga0		at isa? port ?
+#device	sc0		at isa?
+
+# ISA Serial Console Device
+# Make the sio0 device the default system console. (0x10 + 0x20)
+# Turn on hardware RTS/CTS and larger FIFOs. (0x20000)
+# Set the speed to 9600.
+# Allow the debugger to be activated using the break sequence.
+# Use a Sun-style break sequence.
+device          sio0    at isa? port IO_COM1 flags 0x20030 irq 4
+options         CONSPEED=9600
+options         BREAK_TO_DEBUGGER
+options         ALT_BREAK_TO_DEBUGGER
+
+# PCI Ethernet NICs.
+device	de0		# DEC/Intel DC21x4x (``Tulip'')
+device	fxp0		# Intel EtherExpress PRO/100B (82557, 82558)
+device	tx0		# SMC 9432TX (83c170 ``EPIC'')
+device	vx0		# 3Com 3c590, 3c595 (``Vortex'')
+
+# PCI Ethernet NICs that use the common MII bus controller code.
+device	miibus0		# MII bus support
+device	dc0		# DEC/Intel 21143 and various workalikes
+device	rl0		# RealTek 8129/8139
+device	sf0		# Adaptec AIC-6915 (``Starfire'')
+device	sis0		# Silicon Integrated Systems SiS 900/SiS 7016
+device	ste0		# Sundance ST201 (D-Link DFE-550TX)
+device	tl0		# Texas Instruments ThunderLAN
+device	vr0		# VIA Rhine, Rhine II
+device	xl0		# 3Com 3c90x (``Boomerang'', ``Cyclone'')
+
+device		ata		# ATA disk drives
+
+# ISA Ethernet NICs.
+device	ed0	at isa? port 0x280 irq 10 iomem 0xd8000
+device	ep0
+
+# this probe has some problems, so disable it
+device	ex0	at isa? port? irq? disable
+
+# The probe order of these is presently determined by i386/isa/isa_compat.c.
+device	ie0	at isa? port 0x300 irq 10 iomem 0xd0000
+device	fe0	at isa? port 0x300 irq ?
+device	le0	at isa? port 0x300 irq 5 iomem 0xd0000
+device	lnc0	at isa? port 0x280 irq 10 drq 0
+device	cs0	at isa? port 0x300 irq ?
+
+pseudo-device	loop		# Network loopback
+pseudo-device	ether		# Ethernet support
+pseudo-device	tun		# Packet tunnel.
+pseudo-device	md		# Memory "disks"
+pseudo-device	bpf		# Berkeley packet filter

@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# $ClosedBSD$
+#
+echo "Updating device database..."
+/sbin/dev_mkdb
+echo "Loading default sysctl settings..."
+/sbin/sysctl.sh
+echo "Dumping filesystem info..."
+/sbin/mount
+echo "End of /etc/rc."

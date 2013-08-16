@@ -1,0 +1,20 @@
+Welcome to ClosedBSD 1.0-RC1!
+
+You can enter the configuration utility at any time by running 'config'
+from the shell prompt.  This utility allows you to configure your firewall
+rules and network address translation abilities.  Advanced users are
+recommended to use the 'advanced firewall configuration' option.
+
+Novice users who don't have a lot of experience using ipfw can get by
+with defaults in the 'basic firewall configuration' which automatically
+places standard firewall rules, and enables network address translation
+based on the interfaces you define; an external interface is required to
+be defined prior to using this option.  
+
+bugs                   : bugs@closedbsd.org
+support                : support@closedbsd.org
+general inquiries      : info@closedbsd.org
+
+Thanks,
+                         Joshua C. Bergeron
+			 Bruce M. Simpson

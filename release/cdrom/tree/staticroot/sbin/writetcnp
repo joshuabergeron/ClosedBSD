@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/sbin/mount /dev/fd0 /mnt
+cd /etc ; /sbin/tar cfz /mnt/etc.tar.gz . 
+/sbin/umount /dev/fd0

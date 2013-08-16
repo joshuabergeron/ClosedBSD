@@ -1,0 +1,4 @@
+
+ipfwconfig is a standalone version the ipfw ruleset manager in
+closedbsd's config utility.
+

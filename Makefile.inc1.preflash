@@ -1,0 +1,210 @@
+#
+# *** HEAVILY UNDER CONSTRUCTION ***
+#
+# This file contains make targets which are private to the build process,
+# and which are not intended to be directly invoked by the user.
+# Its role in the build process is identical to that of the Makefile.inc1
+# file in the FreeBSD build.
+#
+# The intended user-driven targets are listed in ./Makefile. Most of
+# these targets are defined in this file.
+#
+# Standard targets (not defined here) are documented in the makefiles in
+# /usr/share/mk.  These include:
+#               obj depend all install clean cleandepend cleanobj
+#
+# ----------------------------------------------------------------------------
+
+# Put initial settings here.
+SUBDIR=
+
+# ----------------------------------------------------------------------------
+# Default configuration variables go here. Anything not already
+# specified in the environment will be sourced from here.
+# ----------------------------------------------------------------------------
+
+# Please set ${SRC} to the absolute location of your FreeBSD source.
+SRC?=	/usr/src
+CDROM_ISO?=  closedbsd.iso
+
+#
+# Build up the $SUBDIR from the source tree components we have installed.
+# Initially:- kernel bin closedbsd sbin share usr.bin usr.sbin
+#
+
+.if exists(${.CURDIR}/bin)
+SUBDIR += bin
+.endif
+.if exists(${.CURDIR}/sbin)
+SUBDIR += sbin
+.endif
+.if exists(${.CURDIR}/share) && !defined(NOSHARE)
+SUBDIR += share
+.endif
+.if exists(${.CURDIR}/usr.bin)
+SUBDIR += usr.bin
+.endif
+.if exists(${.CURDIR}/usr.sbin)
+SUBDIR += usr.sbin
+.endif
+
+.if exists(${.CURDIR}/closedbsd)
+SUBDIR += closedbsd
+.endif
+
+# private closedbsd kernel build directory
+.if exists(${.CURDIR}/kernel)
+SUBDIR += kernel
+.endif
+
+.if defined(NOCLEANDIR)
+CLEANDIR=       clean cleandepend
+.else
+CLEANDIR=       cleandir
+.endif
+
+SUP?=           /usr/local/bin/cvsup
+SUPFLAGS?=      -g -L 2 -P -
+.if defined(SUPHOST)
+SUPFLAGS+=      -h ${SUPHOST}
+.endif
+
+MAKEOBJDIRPREFIX?=      /usr/obj
+TARGET_ARCH?=   ${MACHINE_ARCH}
+TARGET?=        ${MACHINE}
+.if make(buildworld)
+BUILD_ARCH!=    sysctl -n hw.machine_arch
+.if ${MACHINE_ARCH} != ${BUILD_ARCH}
+.error To cross-build, set TARGET_ARCH.
+.endif
+.endif
+.if ${MACHINE_ARCH} == ${TARGET_ARCH}
+OBJTREE=        ${MAKEOBJDIRPREFIX}
+.else
+OBJTREE=        ${MAKEOBJDIRPREFIX}/${TARGET_ARCH}
+.endif
+WORLDTMP=       ${OBJTREE}${.CURDIR}/${MACHINE_ARCH}
+STRICTTMPPATH=  ${WORLDTMP}/usr/sbin:${WORLDTMP}/usr/bin:${WORLDTMP}/usr/games
+TMPPATH=        ${STRICTTMPPATH}:${PATH}
+OBJFORMAT_PATH?=        /usr/libexec
+
+TMPDIR?=        /tmp
+TMPPID!=        echo $$$$
+INSTALLTMP=     ${TMPDIR}/install.${TMPPID}
+
+# ----------------------------------------------------------------------------
+# Steps which need to be performed ahead of anything else will go here.
+# ----------------------------------------------------------------------------
+
+# build-tool and temporary build tree stage
+TMAKEENV=       MAKEOBJDIRPREFIX=${OBJTREE} \
+                PATH=${TMPPATH}
+TMAKE=          ${TMAKEENV} ${MAKE} -f Makefile.inc1
+
+# world stage
+WMAKEENV=       ${CROSSENV} \
+                DESTDIR=${WORLDTMP} \
+                PATH=${TMPPATH}
+WMAKE=          ${WMAKEENV} ${MAKE} -f Makefile.inc1
+
+# media stage, propagate the required build environment variables.
+FMAKEENV=       ${CROSSENV} \
+		TARGET_ARCH=${TARGET_ARCH} \
+		CDROM_BOOT=${CDROM_BOOT} \
+		CDROM_ISO=${CDROM_ISO} \
+		SRC=${SRC} \
+                DESTDIR=${WORLDTMP} \
+                PATH=${TMPPATH}
+FMAKE=          ${FMAKEENV} ${MAKE}
+
+# ----------------------------------------------------------------------------
+# Public makefile targets go here.
+# ----------------------------------------------------------------------------
+
+STARTTIME!= LC_ALL=C date
+
+buildworld:
+	@echo "--------------------------------------------------------------"
+	@echo ">>> ClosedBSD/${TARGET_ARCH} buildworld on ${STARTTIME}"
+	@echo "--------------------------------------------------------------"
+	@echo
+	@echo "--------------------------------------------------------------"
+	@echo ">>> Rebuilding the temporary build tree"
+	@echo "--------------------------------------------------------------"
+.if !defined(NOCLEAN)
+	rm -rf ${WORLDTMP}
+.else
+	for dir in bin sbin closedbsd usr.bin usr.sbin ; do \
+		rm -rf ${WORLDTMP}/usr/$$dir; \
+	done
+.endif
+.if !defined(NOCLEAN)
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 1: cleaning up the object tree"
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}; ${TMAKE} ${CLEANDIR:S/^/par-/}
+.endif
+	@echo
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 2: rebuilding the object tree"
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}; ${TMAKE} par-obj
+	@echo
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 3: building everything..."
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}; ${WMAKE} all
+
+iso: buildworld
+	@echo "--------------------------------------------------------------"
+	@echo ">>> ClosedBSD/${TARGET_ARCH} buildiso on ${STARTTIME}"
+	@echo "--------------------------------------------------------------"
+.if !defined(NOCLEAN)
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 1: cleaning up the object tree"
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}/release/cdrom; TARGET_MEDIA=CDROM ${FMAKE} ${CLEANDIR}
+.endif
+	@echo
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 2: rebuilding the object tree"
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}/release/cdrom; TARGET_MEDIA=CDROM ${FMAKE} obj
+	@echo
+	@echo "--------------------------------------------------------------"
+	@echo ">>> stage 3: building everything..."
+	@echo "--------------------------------------------------------------"
+	cd ${.CURDIR}/release/cdrom/kernel; TARGET_MEDIA=CDROM ${FMAKE} all
+	cd ${.CURDIR}/release/cdrom/monolith; TARGET_MEDIA=CDROM ${FMAKE} all
+	cd ${.CURDIR}/release/cdrom/tree; TARGET_MEDIA=CDROM ${FMAKE} all
+	@echo "--------------------------------------------------------------"
+	@echo ">>> ClosedBSD/${TARGET_ARCH} iso build complete ${STARTTIME}"
+	@echo "--------------------------------------------------------------"
+	@echo "Image file now resides in: ${.OBJDIR}/release/cdrom/tree/${CDROM_ISO}"
+	@echo "Have a nice day."
+	@echo
+
+# ----------------------------------------------------------------------------
+# Private makefile targets go here.
+# ----------------------------------------------------------------------------
+
+# parallel build and clean magic
+
+.for __target in clean cleandepend cleandir depend obj
+.for entry in ${SUBDIR}
+${entry}.${__target}__D: .PHONY
+	@if test -d ${.CURDIR}/${entry}.${MACHINE_ARCH}; then \
+		${ECHODIR} "===> ${DIRPRFX}${entry}.${MACHINE_ARCH}"; \
+		edir=${entry}.${MACHINE_ARCH}; \
+		cd ${.CURDIR}/$${edir}; \
+	else \
+		${ECHODIR} "===> ${DIRPRFX}${entry}"; \
+		edir=${entry}; \
+		cd ${.CURDIR}/$${edir}; \
+	fi; \
+	${MAKE} ${__target} DIRPRFX=${DIRPRFX}$${edir}/
+.endfor
+par-${__target}: ${SUBDIR:S/$/.${__target}__D/}
+.endfor
+
+.include <bsd.subdir.mk>
