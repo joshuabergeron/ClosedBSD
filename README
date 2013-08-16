@@ -1,3 +1,8 @@
+The ClosedBSD project is no longer maintained, however I've made the source 
+available here in case anyone is interested in working with it or 
+contributing to it. While I personally am no longer maintain it, 
+I will happily review and merge pull requests.
+
 This is the top level of the ClosedBSD source directory. 
 
 For copyright information, please see the file COPYRIGHT in this
