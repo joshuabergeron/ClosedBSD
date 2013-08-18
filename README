@@ -1,7 +1,17 @@
-The ClosedBSD project is no longer maintained, however I've made the source 
-available here in case anyone is interested in working with it or 
-contributing to it. While I personally am no longer maintain it, 
-I will happily review and merge pull requests.
+ClosedBSD is a FreeBSD derived firewall distribution bootable from
+a cdrom, compact flash, or floppy diskette. It features a complete
+ncurses based console for managing your firewall rulesets.
+
+The ClosedBSD project is no longer maintained, however I've made 
+the source available here in case anyone is interested in working 
+with it or contributing to it. 
+
+The last known release the ClosedBSD build was compatible with was
+4.5-RELEASE. I have tried a few times to get the build process 
+working with current FreeBSD releases, however critical things
+have changed and the procedures need to be updated.
+
+===
 
 This is the top level of the ClosedBSD source directory. 
 
@@ -27,8 +37,3 @@ release		Subdirectories for cdrom, floppy and flash releases.
 sbin		System binaries
 usr.bin		User commands.
 usr.sbin	System administration commands.
-
-For information on keeping your source up to date with ClosedBSD
-development branches via CVS, please see:
-  
-  http://cvs.closedbsd.org/
