@@ -1,11 +1,7 @@
-This file contains additional installation instructions for the ClosedBSD
-distribution. The current revision of this file is:
+This file contains additional installation instructions for the ClosedBSD distribution. 
 
-It is highly recommended that you use the RELENG_4_5 branch of
-FreeBSD sources on your system to build ClosedBSD.
+It is highly recommended that you use the RELENG_4_5 branch of FreeBSD sources on your system to build ClosedBSD.
 
-When using CompactFlash, the build system can be used to create a
-partition image which will contain read-only and read/write partitions.
-XXX: document special flags to mount root read-only in this instance.
+When using CompactFlash, the build system can be used to create a partition image which will contain read-only and read/write partitions. XXX: document special flags to mount root read-only in this instance.
 
 Additional instructions will appear here when ready.
