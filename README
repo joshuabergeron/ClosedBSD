@@ -4,6 +4,8 @@ The ClosedBSD project is no longer maintained, however I've made the source avai
 
 The last known FreeBSD release that the ClosedBSD build was compatible with was 4.5-RELEASE. I have tried a few times to get the build process working with current FreeBSD releases, however critical things have changed and the procedures need to be updated.
 
+A special thanks to Bruce M. Simpson for his extensive help getting my mess of code/directories into a working build.
+
 ===
 
 This is the top level of the ClosedBSD source directory. 
